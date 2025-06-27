@@ -86,82 +86,17 @@
             100% { opacity: 1; }
         }
         
-        .admin-panel {
-            background: #f8f9fa;
-            padding: 20px 30px;
-            border-bottom: 1px solid #dee2e6;
-            display: none;
-        }
-        
-        .admin-title {
-            font-size: 1.2em;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .admin-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .admin-card h4 {
-            color: #495057;
-            margin-bottom: 10px;
-        }
-        
-        .quick-update {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .quick-update select, 
-        .quick-update input {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-        
-        .quick-update button {
-            background: #28a745;
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-        
-        .data-import {
-            border: 2px dashed #ddd;
             padding: 20px;
-            text-align: center;
             border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .data-import:hover {
-            border-color: #007bff;
-            background: #f8f9ff;
-        }
-        
-        .data-import.dragover {
-            border-color: #28a745;
-            background: #f8fff8;
+            display: none;
+            z-index: 1000;
         }
         
         .summary-grid {
@@ -184,7 +119,6 @@
         .summary-card:nth-child(1) { border-left-color: #3498db; }
         .summary-card:nth-child(2) { border-left-color: #f39c12; }
         .summary-card:nth-child(3) { border-left-color: #27ae60; }
-        .summary-card:nth-child(4) { border-left-color: #dc3545; }
         
         .summary-card:hover {
             transform: translateY(-5px);
@@ -282,48 +216,22 @@
             min-width: 50px;
         }
         
-        .edit-mode {
-            background: #fff3cd !important;
-            border: 2px solid #ffc107 !important;
-        }
-        
-        .step-editor {
-            display: none;
+        .step-details {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 10px;
             margin-top: 15px;
+            display: none;
         }
         
-        .step-editor.active {
+        .step-details.show {
             display: block;
-        }
-        
-        .step-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .step-controls button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-        
-        .step-list {
-            max-height: 300px;
-            overflow-y: auto;
         }
         
         .step-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             padding: 10px;
             background: white;
             margin-bottom: 5px;
@@ -331,30 +239,18 @@
             border: 1px solid #ddd;
         }
         
-        .step-checkbox {
-            width: 20px;
-            height: 20px;
-        }
-        
         .step-info {
             flex: 1;
         }
         
-        .step-name-input {
-            width: 100%;
-            border: 1px solid #ddd;
-            padding: 5px;
-            border-radius: 3px;
-            font-size: 0.9em;
-            margin-bottom: 5px;
+        .step-name {
+            font-weight: 500;
+            margin-bottom: 3px;
         }
         
-        .step-department-input {
-            width: 100%;
-            border: 1px solid #ddd;
-            padding: 3px;
-            border-radius: 3px;
+        .step-department {
             font-size: 0.8em;
+            color: #666;
         }
         
         .step-status {
@@ -369,14 +265,14 @@
         .status-pending { background: #6c757d; }
         .status-delayed { background: #dc3545; }
         
-        .save-changes {
-            background: #28a745;
+        .toggle-details {
+            background: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 15px;
+            font-size: 0.8em;
         }
         
         .notification {
@@ -425,18 +321,9 @@
                 justify-content: center;
             }
             
-            .admin-grid { 
-                grid-template-columns: 1fr; 
-            }
-            
-            .quick-update { 
-                flex-direction: column; 
-                align-items: stretch;
-            }
-            
-            .process-header { 
-                flex-direction: column; 
-                gap: 10px; 
+            .process-header {
+                flex-direction: column;
+                gap: 10px;
             }
             
             .progress-container {
@@ -447,61 +334,24 @@
     </style>
 </head>
 <body>
+    <div class="loading" id="loading">
+        <div>구글 시트에서 데이터를 불러오는 중...</div>
+    </div>
+
     <div class="dashboard-container">
         <div class="header">
             <div class="live-indicator">
                 <div class="live-dot"></div>
                 실시간 연동
             </div>
+            
+            <div class="update-controls">
+                <button class="update-btn" onclick="refreshData()">🔄 새로고침</button>
+                <button class="update-btn" onclick="setAutoUpdate()">⏰ 자동업데이트</button>
+            </div>
 
             <h1>🏭 ISO 9001 프로세스 현황판</h1>
             <p>품질팀 실시간 업데이트 시스템</p>
-        </div>
-        
-        <div class="admin-panel" id="admin-panel">
-            <div class="admin-title">
-                🔧 품질팀 관리 패널
-            </div>
-            <div class="admin-grid">
-                <div class="admin-card">
-                    <h4>📊 빠른 진행률 업데이트</h4>
-                    <div class="quick-update">
-                        <select id="process-select">
-                            <option value="order">수주관리</option>
-                            <option value="development">제품개발</option>
-                            <option value="claim">고객클레임</option>
-                            <option value="audit">내부심사</option>
-                            <option value="recycle">리사이클</option>
-                        </select>
-                        <input type="number" id="completed-steps" placeholder="완료 단계" min="0">
-                        <button onclick="updateProgress()">업데이트</button>
-                    </div>
-                    <small>완료된 단계 수를 입력하고 업데이트 버튼을 클릭하세요.</small>
-                </div>
-                
-                <div class="admin-card">
-                    <h4>📁 엑셀 파일 업로드</h4>
-                    <div class="data-import" id="file-drop-zone">
-                        <p>📄 엑셀 파일을 여기에 드래그하거나 클릭하여 업로드</p>
-                        <input type="file" id="file-input" accept=".xlsx,.xls" style="display: none;">
-                    </div>
-                    <small>ISO_현황관리.xlsx 파일을 업로드하면 자동으로 현황판이 업데이트됩니다.</small>
-                </div>
-                
-                <div class="admin-card">
-                    <h4>⏰ 자동 업데이트 설정</h4>
-                    <div class="quick-update">
-                        <select id="auto-update-interval">
-                            <option value="0">수동</option>
-                            <option value="5">5분마다</option>
-                            <option value="30">30분마다</option>
-                            <option value="60">1시간마다</option>
-                        </select>
-                        <button onclick="setAutoUpdate()">설정</button>
-                    </div>
-                    <small>현재: <span id="auto-status">수동 업데이트</span></small>
-                </div>
-            </div>
         </div>
         
         <div class="summary-grid">
@@ -512,159 +362,23 @@
             </div>
             <div class="summary-card">
                 <div class="summary-icon">🔄</div>
-                <div class="summary-number" style="color: #f39c12;" id="progress-count">3</div>
+                <div class="summary-number" style="color: #f39c12;" id="progress-count">0</div>
                 <div>진행중인 단계</div>
             </div>
             <div class="summary-card">
                 <div class="summary-icon">✅</div>
-                <div class="summary-number" style="color: #27ae60;" id="completion-rate">38%</div>
+                <div class="summary-number" style="color: #27ae60;" id="completion-rate">0%</div>
                 <div>전체 완료율</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-icon">⚠️</div>
-                <div class="summary-number" style="color: #dc3545;" id="delayed-count">0</div>
-                <div>지연중인 프로세스</div>
             </div>
         </div>
         
-        <div class="process-section">
-            <!-- 수주관리 프로세스 -->
-            <div class="process-card" id="order-process">
-                <div class="process-header">
-                    <div class="process-title">📋 수주관리 프로세스</div>
-                    <div id="order-progress-text">6/17 단계 완료 (35%)</div>
-                    <button class="update-btn" onclick="editProcessWithPassword('order')">🔒 편집</button>
-                </div>
-                <div class="process-content">
-                    <div class="progress-container">
-                        <div class="progress-bar-wrapper">
-                            <div class="progress-bar" id="order-progress-bar" style="width: 35%"></div>
-                        </div>
-                        <div class="progress-text" id="order-percentage">35%</div>
-                    </div>
-                    
-                    <div class="step-editor" id="order-editor">
-                        <div class="step-controls">
-                            <button onclick="markCompleted('order')">완료 처리</button>
-                            <button onclick="markInProgress('order')">진행중 처리</button>
-                            <button onclick="markDelayed('order')">지연 처리</button>
-                        </div>
-                        <div class="step-list" id="order-steps">
-                            <!-- 단계 목록이 여기에 동적으로 생성됩니다 -->
-                        </div>
-                        <button class="save-changes" onclick="saveProcessChanges('order')">변경사항 저장</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 제품개발 프로세스 -->
-            <div class="process-card" id="development-process">
-                <div class="process-header">
-                    <div class="process-title">🔬 제품개발 프로세스</div>
-                    <div id="development-progress-text">4/12 단계 완료 (33%)</div>
-                    <button class="update-btn" onclick="editProcessWithPassword('development')">🔒 편집</button>
-                </div>
-                <div class="process-content">
-                    <div class="progress-container">
-                        <div class="progress-bar-wrapper">
-                            <div class="progress-bar" id="development-progress-bar" style="width: 33%"></div>
-                        </div>
-                        <div class="progress-text" id="development-percentage">33%</div>
-                    </div>
-                    <div class="step-editor" id="development-editor">
-                        <div class="step-controls">
-                            <button onclick="markCompleted('development')">완료 처리</button>
-                            <button onclick="markInProgress('development')">진행중 처리</button>
-                            <button onclick="markDelayed('development')">지연 처리</button>
-                        </div>
-                        <div class="step-list" id="development-steps"></div>
-                        <button class="save-changes" onclick="saveProcessChanges('development')">변경사항 저장</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 고객클레임 프로세스 -->
-            <div class="process-card" id="claim-process">
-                <div class="process-header">
-                    <div class="process-title">🚨 고객클레임처리 프로세스</div>
-                    <div id="claim-progress-text">3/9 단계 완료 (33%)</div>
-                    <button class="update-btn" onclick="editProcessWithPassword('claim')">🔒 편집</button>
-                </div>
-                <div class="process-content">
-                    <div class="progress-container">
-                        <div class="progress-bar-wrapper">
-                            <div class="progress-bar" id="claim-progress-bar" style="width: 33%"></div>
-                        </div>
-                        <div class="progress-text" id="claim-percentage">33%</div>
-                    </div>
-                    <div class="step-editor" id="claim-editor">
-                        <div class="step-controls">
-                            <button onclick="markCompleted('claim')">완료 처리</button>
-                            <button onclick="markInProgress('claim')">진행중 처리</button>
-                            <button onclick="markDelayed('claim')">지연 처리</button>
-                        </div>
-                        <div class="step-list" id="claim-steps"></div>
-                        <button class="save-changes" onclick="saveProcessChanges('claim')">변경사항 저장</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 내부심사 프로세스 -->
-            <div class="process-card" id="audit-process">
-                <div class="process-header">
-                    <div class="process-title">🔍 내부심사 프로세스</div>
-                    <div id="audit-progress-text">2/8 단계 완료 (25%)</div>
-                    <button class="update-btn" onclick="editProcessWithPassword('audit')">🔒 편집</button>
-                </div>
-                <div class="process-content">
-                    <div class="progress-container">
-                        <div class="progress-bar-wrapper">
-                            <div class="progress-bar" id="audit-progress-bar" style="width: 25%"></div>
-                        </div>
-                        <div class="progress-text" id="audit-percentage">25%</div>
-                    </div>
-                    <div class="step-editor" id="audit-editor">
-                        <div class="step-controls">
-                            <button onclick="markCompleted('audit')">완료 처리</button>
-                            <button onclick="markInProgress('audit')">진행중 처리</button>
-                            <button onclick="markDelayed('audit')">지연 처리</button>
-                        </div>
-                        <div class="step-list" id="audit-steps"></div>
-                        <button class="save-changes" onclick="saveProcessChanges('audit')">변경사항 저장</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 리사이클 프로세스 -->
-            <div class="process-card" id="recycle-process">
-                <div class="process-header">
-                    <div class="process-title">♻️ 리사이클 프로세스</div>
-                    <div id="recycle-progress-text">5/10 단계 완료 (50%)</div>
-                    <button class="update-btn" onclick="editProcessWithPassword('recycle')">🔒 편집</button>
-                </div>
-                <div class="process-content">
-                    <div class="progress-container">
-                        <div class="progress-bar-wrapper">
-                            <div class="progress-bar" id="recycle-progress-bar" style="width: 50%"></div>
-                        </div>
-                        <div class="progress-text" id="recycle-percentage">50%</div>
-                    </div>
-                    <div class="step-editor" id="recycle-editor">
-                        <div class="step-controls">
-                            <button onclick="markCompleted('recycle')">완료 처리</button>
-                            <button onclick="markInProgress('recycle')">진행중 처리</button>
-                            <button onclick="markDelayed('recycle')">지연 처리</button>
-                        </div>
-                        <div class="step-list" id="recycle-steps"></div>
-                        <button class="save-changes" onclick="saveProcessChanges('recycle')">변경사항 저장</button>
-                    </div>
-                </div>
-            </div>
+        <div class="process-section" id="process-container">
+            <!-- 프로세스 카드들이 여기에 동적으로 생성됩니다 -->
         </div>
         
         <div class="update-info">
-            마지막 업데이트: <span id="last-update-time">2025년 6월 19일 14:30</span><br>
-            다음 자동 업데이트: <span id="next-update">2025년 6월 19일 15:00</span>
+            마지막 업데이트: <span id="last-update-time">-</span><br>
+            다음 자동 업데이트: <span id="next-update">-</span>
         </div>
     </div>
     
@@ -672,262 +386,151 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // 프로세스 데이터 저장소
-        let processData = {
-            order: { total: 17, completed: 6, steps: [] },
-            development: { total: 12, completed: 4, steps: [] },
-            claim: { total: 9, completed: 3, steps: [] },
-            audit: { total: 8, completed: 2, steps: [] },
-            recycle: { total: 10, completed: 5, steps: [] }
-        };
+        // 구글 Apps Script 웹앱 URL (배포 후 실제 URL로 변경)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDJ1x1OHOB6beaRSKP9cTgCPk3Gq-EIuQ7kbj60yFPVufRH9jrekAeQ24_G3DTKe9xrA/exec';
         
-        // 단계 데이터 (실제 ISO 체크리스트로 업데이트)
-        const stepsData = {
-            order: [
-                { name: '고객 문의서 작성 완료', department: '영업팀', completed: true, status: 'completed' },
-                { name: '기술검토 의뢰서 작성', department: '영업팀', completed: true, status: 'completed' },
-                { name: '기술 타당성 검토서 작성', department: '연구개발팀', completed: true, status: 'completed' },
-                { name: '생산 가능성 검토서 작성', department: '생산팀', completed: true, status: 'completed' },
-                { name: '원가계산서 작성', department: '경영지원팀', completed: true, status: 'completed' },
-                { name: '견적서 작성 완료', department: '영업팀', completed: true, status: 'completed' },
-                { name: '견적 승인서 취득', department: '영업팀장', completed: false, status: 'delayed' },
-                { name: '견적서 제출 확인서 작성', department: '영업팀', completed: false, status: 'pending' },
-                { name: 'Follow-up 기록지 작성', department: '영업팀', completed: false, status: 'pending' },
-                { name: '주문서 접수 및 확인', department: '영업팀', completed: false, status: 'pending' },
-                { name: '주문서 검토서 작성', department: '영업팀', completed: false, status: 'pending' },
-                { name: '수주 최종 승인 완료', department: '영업팀장', completed: false, status: 'pending' },
-                { name: '수주관리 시스템 등록', department: '영업팀', completed: false, status: 'pending' },
-                { name: '생산계획서 수립', department: '생산관리팀', completed: false, status: 'pending' },
-                { name: '자재 발주서 발행', department: '구매팀', completed: false, status: 'pending' },
-                { name: '주문확인서 고객 발송', department: '영업팀', completed: false, status: 'pending' },
-                { name: '수주현황 관리표 업데이트', department: '영업팀', completed: false, status: 'pending' }
-            ],
-            development: [
-                { name: '고객 사양서 및 기술 요구사항 문서 접수 완료', department: '영업팀', completed: true, status: 'completed' },
-                { name: '물성 요구사항 (인장강도, 신장률, 경도 등) 명확히 확인', department: '품질팀', completed: true, status: 'completed' },
-                { name: '용도 및 가공조건 (압출온도, 성형조건 등) 파악', department: '기술팀', completed: true, status: 'completed' },
-                { name: '납기 일정 및 물량 확인', department: '영업팀', completed: true, status: 'completed' },
-                { name: '환경 규제 요구사항 (RoHS, REACH 등) 확인', department: '품질팀', completed: false, status: 'progress' },
-                { name: '기술적 실현 가능성 검토 완료', department: '연구개발팀', completed: false, status: 'pending' },
-                { name: '기본 수지(PVC) 등급 선정 완료', department: '연구개발팀', completed: false, status: 'pending' },
-                { name: 'Lab 스케일 물성 테스트 완료', department: '품질팀', completed: false, status: 'pending' },
-                { name: '배합표 최종 승인 완료', department: '품질팀장', completed: false, status: 'pending' },
-                { name: '고객 샘플 포장 및 라벨링 완료', department: '생산팀', completed: false, status: 'pending' },
-                { name: '고객 최종 승인서 수령', department: '영업팀', completed: false, status: 'pending' },
-                { name: '양산 배합표 시스템 등록', department: '품질팀', completed: false, status: 'pending' }
-            ],
-            claim: [
-                { name: '클레임 접수 등록, 과거 문제 이력 점검', department: '품질팀', completed: true, status: 'completed' },
-                { name: '즉시 대응, 고객 특별요구사항 품질팀 전달', department: '영업팀', completed: true, status: 'completed' },
-                { name: '원인 분석', department: '품질팀', completed: true, status: 'completed' },
-                { name: '클레임 조사보고서 작성', department: '품질팀', completed: false, status: 'delayed' },
-                { name: '개선대책 수립, 최고경영자 보고', department: '품질팀', completed: false, status: 'pending' },
-                { name: '고객 보고, 추가 요구사항 여부', department: '영업팀', completed: false, status: 'pending' },
-                { name: '개선조치 실행', department: '생산팀', completed: false, status: 'pending' },
-                { name: '효과성 검증', department: '품질팀', completed: false, status: 'pending' },
-                { name: '수평 전개', department: '품질팀', completed: false, status: 'pending' },
-                { name: '고객 만족도 확인', department: '영업팀', completed: false, status: 'pending' },
-                { name: '클레임 종료', department: '품질팀', completed: false, status: 'pending' }
-            ],
-            audit: [
-                { name: '년간 내부심사계획서 작성 완료', department: '품질팀', completed: true, status: 'completed' },
-                { name: '경영자 승인 완료', department: '경영진', completed: true, status: 'completed' },
-                { name: '심사팀 구성서 작성 완료', department: '품질팀', completed: false, status: 'progress' },
-                { name: '내부심사원 자격 확인 (교육이수 여부)', department: '품질팀', completed: false, status: 'pending' },
-                { name: '심사계획서 심사 2주전 작성', department: '품질팀', completed: false, status: 'pending' },
-                { name: '피심사부서에 심사계획 통보 완료', department: '품질팀', completed: false, status: 'pending' },
-                { name: '심사 체크리스트 작성 완료', department: '품질팀', completed: false, status: 'pending' },
-                { name: '관련 문서 및 자료 사전 검토 완료', department: '품질팀', completed: false, status: 'pending' }
-            ],
-            recycle: [
-                { name: '불량재고 발생보고서 작성 완료', department: '생산팀', completed: true, status: 'completed' },
-                { name: '불량재고 격리 및 라벨링 완료', department: '생산팀', completed: true, status: 'completed' },
-                { name: '불량재고 분류표 작성 완료', department: '품질팀', completed: true, status: 'completed' },
-                { name: '리사이클 가능성 판정서 완료', department: '품질팀', completed: true, status: 'completed' },
-                { name: '전처리 작업지시서 확인', department: '생산팀', completed: true, status: 'completed' },
-                { name: '선별 및 세척 작업 완료', department: '생산팀', completed: false, status: 'progress' },
-                { name: '파쇄 작업 완료 (5-10mm, 금속검출 통과)', department: '생산팀', completed: false, status: 'pending' },
-                { name: '전처리 완료보고서 작성', department: '생산팀', completed: false, status: 'pending' },
-                { name: '혼합비율 계산서 작성', department: '품질팀', completed: false, status: 'pending' },
-                { name: '리사이클 배합표 승인', department: '품질팀장', completed: false, status: 'pending' }
-            ]
-        };
+        // 전역 변수
+        let processData = {};
+        let autoUpdateInterval = null;
+        let autoUpdateMinutes = 0;
         
-        // 편집 권한 확인 (암호화된 편집 모드)
-        const EDIT_PASSWORD = "ISO2025!"; // 편집 암호
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            updateTime();
+            setInterval(updateTime, 60000); // 1분마다 시간 업데이트
+            
+            // 페이지 제목에 시간 표시
+            setInterval(() => {
+                const now = new Date();
+                document.title = `ISO 현황판 - ${now.toLocaleTimeString()}`;
+            }, 1000);
+        });
         
-        function editProcessWithPassword(processType) {
-            const password = prompt("편집 권한이 필요합니다. 암호를 입력하세요:");
+        // 구글 시트에서 데이터 가져오기
+        async function refreshData() {
+            showLoading(true);
             
-            if (password === null) {
-                return; // 취소한 경우
-            }
-            
-            if (password === EDIT_PASSWORD) {
-                editProcess(processType);
-                showNotification('편집 권한이 확인되었습니다.');
-            } else {
-                showNotification('올바르지 않은 암호입니다. 편집 권한이 없습니다.', 'error');
-            }
-        }
-        
-        // 진행률 업데이트
-        function updateProgress() {
-            const processType = document.getElementById('process-select').value;
-            const completedSteps = parseInt(document.getElementById('completed-steps').value);
-            
-            if (isNaN(completedSteps) || completedSteps < 0) {
-                showNotification('올바른 숫자를 입력하세요.', 'error');
-                return;
-            }
-            
-            const totalSteps = processData[processType].total;
-            
-            if (completedSteps > totalSteps) {
-                showNotification(`완료 단계는 ${totalSteps}개를 초과할 수 없습니다.`, 'error');
-                return;
-            }
-            
-            const percentage = Math.round((completedSteps / totalSteps) * 100);
-            
-            // 데이터 업데이트
-            processData[processType].completed = completedSteps;
-            
-            // UI 업데이트
-            updateProcessUI(processType, completedSteps, totalSteps, percentage);
-            
-            // 전체 완료율 업데이트
-            updateOverallProgress();
-            
-            showNotification(`${getProcessName(processType)} 진행률이 ${percentage}%로 업데이트되었습니다.`);
-            
-            // 입력 필드 초기화
-            document.getElementById('completed-steps').value = '';
-        }
-        
-        // 프로세스 UI 업데이트
-        function updateProcessUI(processType, completed, total, percentage) {
-            const progressBar = document.getElementById(processType + '-progress-bar');
-            const progressText = document.getElementById(processType + '-progress-text');
-            const percentageText = document.getElementById(processType + '-percentage');
-            
-            if (progressBar) {
-                progressBar.style.width = percentage + '%';
-            }
-            if (progressText) {
-                progressText.textContent = `${completed}/${total} 단계 완료 (${percentage}%)`;
-            }
-            if (percentageText) {
-                percentageText.textContent = percentage + '%';
-            }
-        }
-        
-        // 프로세스명 변환
-        function getProcessName(processType) {
-            const names = {
-                order: '수주관리',
-                development: '제품개발',
-                claim: '고객클레임처리',
-                audit: '내부심사',
-                recycle: '리사이클'
-            };
-            return names[processType] || processType;
-        }
-        
-        // 전체 완료율 계산
-        function updateOverallProgress() {
-            let totalSteps = 0;
-            let totalCompleted = 0;
-            
-            for (let process in processData) {
-                totalSteps += processData[process].total;
-                totalCompleted += processData[process].completed;
-            }
-            
-            const overallPercentage = Math.round((totalCompleted / totalSteps) * 100);
-            document.getElementById('completion-rate').textContent = overallPercentage + '%';
-        }
-        
-        // 프로세스 편집 모드
-        function editProcess(processType) {
-            const editor = document.getElementById(processType + '-editor');
-            const card = document.getElementById(processType + '-process');
-            
-            if (editor.classList.contains('active')) {
-                editor.classList.remove('active');
-                card.classList.remove('edit-mode');
-                showNotification('편집 모드를 종료했습니다.');
-            } else {
-                // 다른 편집기들 닫기
-                document.querySelectorAll('.step-editor').forEach(e => e.classList.remove('active'));
-                document.querySelectorAll('.process-card').forEach(c => c.classList.remove('edit-mode'));
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
                 
-                editor.classList.add('active');
-                card.classList.add('edit-mode');
-                loadStepEditor(processType);
-                showNotification(`${getProcessName(processType)} 편집 모드를 시작했습니다.`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    processData = data.data;
+                    updateDashboard();
+                    showNotification('데이터를 성공적으로 업데이트했습니다.');
+                } else {
+                    throw new Error(data.error || '데이터 로드 실패');
+                }
+                
+            } catch (error) {
+                console.error('Data fetch error:', error);
+                showNotification('데이터 로드에 실패했습니다. 네트워크를 확인해주세요.', 'error');
+                
+                // 오류 시 샘플 데이터 사용
+                loadSampleData();
+            } finally {
+                showLoading(false);
             }
         }
         
-        // 단계 편집기 로드 (체크리스트 항목 편집 가능)
-        function loadStepEditor(processType) {
-            const stepsList = document.getElementById(processType + '-steps');
-            const steps = stepsData[processType] || [];
+        // 현황판 업데이트
+        function updateDashboard() {
+            updateSummaryCards();
+            updateProcessCards();
+            updateTime();
+        }
+        
+        // 요약 카드 업데이트
+        function updateSummaryCards() {
+            const totalProcesses = Object.keys(processData).length;
+            let totalCompleted = 0;
+            let totalSteps = 0;
+            let progressCount = 0;
             
-            stepsList.innerHTML = '';
-            steps.forEach((step, index) => {
-                const stepItem = document.createElement('div');
-                stepItem.className = 'step-item';
-                stepItem.innerHTML = `
-                    <input type="checkbox" class="step-checkbox" ${step.completed ? 'checked' : ''} 
-                           onchange="toggleStepCompletion('${processType}', ${index})">
+            for (let processKey in processData) {
+                const process = processData[processKey];
+                totalCompleted += process.completed;
+                totalSteps += process.total;
+                
+                // 진행중인 단계 계산
+                if (process.steps) {
+                    progressCount += process.steps.filter(step => 
+                        step.status === 'progress' || step.status === 'delayed'
+                    ).length;
+                }
+            }
+            
+            const completionRate = totalSteps > 0 ? Math.round((totalCompleted / totalSteps) * 100) : 0;
+            
+            document.getElementById('total-processes').textContent = totalProcesses;
+            document.getElementById('progress-count').textContent = progressCount;
+            document.getElementById('completion-rate').textContent = completionRate + '%';
+        }
+        
+        // 프로세스 카드 업데이트
+        function updateProcessCards() {
+            const container = document.getElementById('process-container');
+            container.innerHTML = '';
+            
+            for (let processKey in processData) {
+                const process = processData[processKey];
+                const card = createProcessCard(processKey, process);
+                container.appendChild(card);
+            }
+        }
+        
+        // 프로세스 카드 생성
+        function createProcessCard(processKey, process) {
+            const percentage = Math.round((process.completed / process.total) * 100);
+            
+            const card = document.createElement('div');
+            card.className = 'process-card';
+            card.id = processKey + '-process';
+            
+            card.innerHTML = `
+                <div class="process-header">
+                    <div class="process-title">${process.name}</div>
+                    <div>${process.completed}/${process.total} 단계 완료 (${percentage}%)</div>
+                    <button class="toggle-details" onclick="toggleStepDetails('${processKey}')">상세보기</button>
+                </div>
+                <div class="process-content">
+                    <div class="progress-container">
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="progress-text">${percentage}%</div>
+                    </div>
+                    
+                    <div class="step-details" id="${processKey}-details">
+                        ${createStepsList(process.steps || [])}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // 단계 목록 생성
+        function createStepsList(steps) {
+            if (!steps || steps.length === 0) {
+                return '<p>단계 정보가 없습니다.</p>';
+            }
+            
+            return steps.map(step => `
+                <div class="step-item">
                     <div class="step-info">
-                        <input type="text" class="step-name-input" value="${step.name}" 
-                               onchange="updateStepName('${processType}', ${index}, this.value)"
-                               placeholder="단계 이름을 입력하세요">
-                        <input type="text" class="step-department-input" value="${step.department}" 
-                               onchange="updateStepDepartment('${processType}', ${index}, this.value)"
-                               placeholder="담당 부서">
+                        <div class="step-name">${step.name}</div>
+                        <div class="step-department">${step.department}</div>
                     </div>
                     <div class="step-status status-${step.status}">${getStatusText(step.status)}</div>
-                `;
-                stepsList.appendChild(stepItem);
-            });
-        }
-        
-        // 단계 이름 업데이트 (자동 저장)
-        function updateStepName(processType, stepIndex, newName) {
-            const steps = stepsData[processType];
-            if (steps && steps[stepIndex]) {
-                steps[stepIndex].name = newName;
-                
-                // 변경사항 자동 저장
-                autoSaveData();
-                showNotification('단계 이름이 업데이트되었습니다.');
-            }
-        }
-        
-        // 단계 담당부서 업데이트 (자동 저장)
-        function updateStepDepartment(processType, stepIndex, newDepartment) {
-            const steps = stepsData[processType];
-            if (steps && steps[stepIndex]) {
-                steps[stepIndex].department = newDepartment;
-                
-                // 변경사항 자동 저장
-                autoSaveData();
-                showNotification('담당 부서가 업데이트되었습니다.');
-            }
-        }
-        
-        // 자동 저장 함수
-        function autoSaveData() {
-            const dataToSave = {
-                processData: processData,
-                stepsData: stepsData,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('iso_dashboard_data', JSON.stringify(dataToSave));
+                </div>
+            `).join('');
         }
         
         // 상태 텍스트 변환
@@ -941,172 +544,39 @@
             return statusMap[status] || '알 수 없음';
         }
         
-        // 단계 완료 상태 토글 (자동 저장)
-        function toggleStepCompletion(processType, stepIndex) {
-            const steps = stepsData[processType];
-            if (!steps || !steps[stepIndex]) return;
+        // 단계 상세 토글
+        function toggleStepDetails(processKey) {
+            const details = document.getElementById(processKey + '-details');
+            const isVisible = details.classList.contains('show');
             
-            steps[stepIndex].completed = !steps[stepIndex].completed;
-            steps[stepIndex].status = steps[stepIndex].completed ? 'completed' : 'pending';
+            // 모든 상세 정보 숨기기
+            document.querySelectorAll('.step-details').forEach(el => {
+                el.classList.remove('show');
+            });
             
-            // 완료된 단계 수 계산
-            const completedCount = steps.filter(step => step.completed).length;
-            processData[processType].completed = completedCount;
+            // 버튼 텍스트 업데이트
+            document.querySelectorAll('.toggle-details').forEach(btn => {
+                btn.textContent = '상세보기';
+            });
             
-            // UI 업데이트
-            const percentage = Math.round((completedCount / processData[processType].total) * 100);
-            updateProcessUI(processType, completedCount, processData[processType].total, percentage);
-            updateOverallProgress();
-            updateProgressCount();
-            
-            // 변경사항 자동 저장
-            autoSaveData();
-            
-            showNotification(`${steps[stepIndex].name} 단계가 ${steps[stepIndex].completed ? '완료' : '미완료'}로 변경되었습니다.`);
-        }
-        
-        // 단계 상태 일괄 변경
-        function markCompleted(processType) {
-            changeSelectedStepsStatus(processType, 'completed');
-        }
-        
-        function markInProgress(processType) {
-            changeSelectedStepsStatus(processType, 'progress');
-        }
-        
-        function markDelayed(processType) {
-            changeSelectedStepsStatus(processType, 'delayed');
-        }
-        
-        function changeSelectedStepsStatus(processType, newStatus) {
-            const stepsList = document.getElementById(processType + '-steps');
-            const checkboxes = stepsList.querySelectorAll('.step-checkbox:checked');
-            
-            if (checkboxes.length === 0) {
-                showNotification('변경할 단계를 먼저 선택하세요.', 'error');
-                return;
+            if (!isVisible) {
+                details.classList.add('show');
+                event.target.textContent = '숨기기';
             }
-            
-            checkboxes.forEach((checkbox, index) => {
-                const stepIndex = Array.from(stepsList.querySelectorAll('.step-checkbox')).indexOf(checkbox);
-                if (stepsData[processType][stepIndex]) {
-                    stepsData[processType][stepIndex].status = newStatus;
-                    if (newStatus === 'completed') {
-                        stepsData[processType][stepIndex].completed = true;
-                        checkbox.checked = true;
-                    }
-                }
-            });
-            
-            // 편집기 새로고침
-            loadStepEditor(processType);
-            
-            // 완료된 단계 수 재계산
-            const completedCount = stepsData[processType].filter(step => step.completed).length;
-            processData[processType].completed = completedCount;
-            
-            const percentage = Math.round((completedCount / processData[processType].total) * 100);
-            updateProcessUI(processType, completedCount, processData[processType].total, percentage);
-            updateOverallProgress();
-            updateProgressCount();
-            
-            // 변경사항 자동 저장
-            autoSaveData();
-            
-            showNotification(`선택된 단계들이 ${getStatusText(newStatus)} 상태로 변경되었습니다.`);
-        }
-        
-        // 프로세스 변경사항 저장
-        function saveProcessChanges(processType) {
-            // 데이터를 로컬 스토리지에 저장
-            const dataToSave = {
-                processData: processData,
-                stepsData: stepsData,
-                timestamp: new Date().toISOString()
-            };
-            
-            localStorage.setItem('iso_dashboard_data', JSON.stringify(dataToSave));
-            
-            // 편집 모드 종료
-            const editor = document.getElementById(processType + '-editor');
-            const card = document.getElementById(processType + '-process');
-            editor.classList.remove('active');
-            card.classList.remove('edit-mode');
-            
-            showNotification(`${getProcessName(processType)} 프로세스 변경사항이 저장되었습니다.`);
-        }
-        
-        // 파일 업로드 초기화
-        function initFileUpload() {
-            const dropZone = document.getElementById('file-drop-zone');
-            const fileInput = document.getElementById('file-input');
-            
-            dropZone.addEventListener('click', () => fileInput.click());
-            
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
-            
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('dragover');
-            });
-            
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    handleFileUpload(files[0]);
-                }
-            });
-            
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    handleFileUpload(e.target.files[0]);
-                }
-            });
-        }
-        
-        // 파일 업로드 처리
-        function handleFileUpload(file) {
-            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-                showNotification('엑셀 파일만 업로드 가능합니다.', 'error');
-                return;
-            }
-            
-            showNotification('파일을 업로드하고 있습니다...');
-            
-            // 실제 환경에서는 파일을 파싱하여 데이터 업데이트
-            setTimeout(() => {
-                showNotification('엑셀 파일이 성공적으로 업로드되었습니다.');
-                updateDashboardFromFile();
-            }, 2000);
-        }
-        
-        // 파일에서 현황판 업데이트
-        function updateDashboardFromFile() {
-            // 예시 데이터로 업데이트 시뮬레이션
-            processData.order.completed = Math.min(processData.order.completed + 1, processData.order.total);
-            processData.development.completed = Math.min(processData.development.completed + 1, processData.development.total);
-            
-            // 모든 프로세스 UI 업데이트
-            for (let processType in processData) {
-                const data = processData[processType];
-                const percentage = Math.round((data.completed / data.total) * 100);
-                updateProcessUI(processType, data.completed, data.total, percentage);
-            }
-            
-            updateOverallProgress();
         }
         
         // 자동 업데이트 설정
-        let autoUpdateInterval = null;
-        
         function setAutoUpdate() {
-            const interval = parseInt(document.getElementById('auto-update-interval').value);
-            const statusElement = document.getElementById('auto-status');
+            const minutes = prompt('자동 업데이트 간격을 분 단위로 입력하세요 (0은 자동 업데이트 중지):');
+            
+            if (minutes === null) return;
+            
+            const interval = parseInt(minutes);
+            
+            if (isNaN(interval) || interval < 0) {
+                showNotification('올바른 숫자를 입력하세요.', 'error');
+                return;
+            }
             
             // 기존 인터벌 클리어
             if (autoUpdateInterval) {
@@ -1114,137 +584,44 @@
                 autoUpdateInterval = null;
             }
             
+            autoUpdateMinutes = interval;
+            
             if (interval > 0) {
                 autoUpdateInterval = setInterval(() => {
-                    loadData();
-                    showNotification('자동 업데이트 완료');
+                    refreshData();
                 }, interval * 60 * 1000);
                 
-                statusElement.textContent = `${interval}분마다 자동 업데이트`;
+                showNotification(`${interval}분마다 자동 업데이트를 시작합니다.`);
             } else {
-                statusElement.textContent = '수동 업데이트';
+                showNotification('자동 업데이트가 중지되었습니다.');
             }
             
-            showNotification('자동 업데이트 설정이 변경되었습니다.');
+            updateNextUpdateTime();
         }
         
-        // 데이터 저장
-        function saveData() {
-            const dataToSave = {
-                processData: processData,
-                stepsData: stepsData,
-                timestamp: new Date().toISOString()
-            };
+        // 다음 업데이트 시간 계산
+        function updateNextUpdateTime() {
+            const nextUpdateElement = document.getElementById('next-update');
             
-            localStorage.setItem('iso_dashboard_data', JSON.stringify(dataToSave));
-            showNotification('모든 데이터가 저장되었습니다.');
-        }
-        
-        // 데이터 불러오기 (페이지 로드 시 자동 실행)
-        function loadData() {
-            try {
-                const savedData = localStorage.getItem('iso_dashboard_data');
-                if (savedData) {
-                    const data = JSON.parse(savedData);
-                    
-                    // 저장된 데이터로 현재 데이터 업데이트
-                    if (data.processData) {
-                        processData = data.processData;
-                    }
-                    if (data.stepsData) {
-                        // 기존 데이터와 저장된 데이터 병합
-                        for (let processType in data.stepsData) {
-                            if (data.stepsData[processType]) {
-                                stepsData[processType] = data.stepsData[processType];
-                            }
-                        }
-                    }
-                    
-                    // UI 전체 업데이트
-                    updateAllProcesses();
-                    showNotification('저장된 변경사항을 불러왔습니다.');
-                    
-                    // 마지막 저장 시간 표시
-                    if (data.timestamp) {
-                        const saveTime = new Date(data.timestamp);
-                        document.getElementById('last-update-time').textContent = 
-                            saveTime.toLocaleString('ko-KR');
-                    }
-                } else {
-                    // 저장된 데이터가 없으면 초기 데이터로 UI 업데이트
-                    updateAllProcesses();
-                    showNotification('초기 데이터로 현황판을 시작합니다.');
-                }
-            } catch (error) {
-                showNotification('데이터 불러오기에 실패했습니다. 초기 데이터를 사용합니다.', 'error');
-                console.error('Load data error:', error);
-                // 오류 발생 시 초기 데이터로 UI 업데이트
-                updateAllProcesses();
+            if (autoUpdateMinutes > 0) {
+                const nextUpdate = new Date(Date.now() + autoUpdateMinutes * 60 * 1000);
+                nextUpdateElement.textContent = nextUpdate.toLocaleString('ko-KR');
+            } else {
+                nextUpdateElement.textContent = '자동 업데이트 없음';
             }
-        }
-        
-        // 모든 프로세스 UI 업데이트 (저장된 데이터 반영)
-        function updateAllProcesses() {
-            // 각 프로세스의 완료된 단계 수 재계산
-            for (let processType in processData) {
-                if (stepsData[processType]) {
-                    // 실제 완료된 단계 수 계산
-                    const completedCount = stepsData[processType].filter(step => step.completed).length;
-                    processData[processType].completed = completedCount;
-                    processData[processType].total = stepsData[processType].length;
-                }
-                
-                const data = processData[processType];
-                const percentage = Math.round((data.completed / data.total) * 100);
-                updateProcessUI(processType, data.completed, data.total, percentage);
-            }
-            
-            // 전체 완료율 업데이트
-            updateOverallProgress();
-            
-            // 진행중인 단계 수 업데이트
-            updateProgressCount();
-        }
-        
-        // 진행중인 단계 수 계산 및 업데이트
-        function updateProgressCount() {
-            let progressCount = 0;
-            for (let processType in stepsData) {
-                if (stepsData[processType]) {
-                    progressCount += stepsData[processType].filter(step => 
-                        step.status === 'progress' || step.status === 'delayed'
-                    ).length;
-                }
-            }
-            document.getElementById('progress-count').textContent = progressCount;
-            
-            // 지연중인 프로세스 수 계산 및 업데이트
-            updateDelayedCount();
-        }
-        
-        // 지연중인 프로세스 수 계산 및 업데이트
-        function updateDelayedCount() {
-            let delayedCount = 0;
-            for (let processType in stepsData) {
-                if (stepsData[processType]) {
-                    const hasDelayedSteps = stepsData[processType].some(step => step.status === 'delayed');
-                    if (hasDelayedSteps) {
-                        delayedCount++;
-                    }
-                }
-            }
-            document.getElementById('delayed-count').textContent = delayedCount;
         }
         
         // 시간 업데이트
         function updateTime() {
             const now = new Date();
-            document.getElementById('last-update-time').textContent = 
-                now.toLocaleString('ko-KR');
-            
-            const nextUpdate = new Date(now.getTime() + 30 * 60 * 1000);
-            document.getElementById('next-update').textContent = 
-                nextUpdate.toLocaleString('ko-KR');
+            document.getElementById('last-update-time').textContent = now.toLocaleString('ko-KR');
+            updateNextUpdateTime();
+        }
+        
+        // 로딩 표시
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
         }
         
         // 알림 표시
@@ -1259,42 +636,105 @@
             }, 3000);
         }
         
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            initFileUpload();
-            
-            // 저장된 데이터 불러오기 (가장 중요!)
-            loadData();
-            updateTime();
-            
-            // 현재 시간 표시 업데이트
-            setInterval(updateTime, 60000); // 1분마다 업데이트
-            
-            // 페이지 제목에 시간 표시
-            setInterval(() => {
-                const now = new Date();
-                document.title = `ISO 현황판 - ${now.toLocaleTimeString()}`;
-            }, 1000);
-            
-            showNotification('ISO 9001 현황판이 로드되었습니다.');
-        });
-        
-        // 페이지 언로드 시 자동 저장
-        window.addEventListener('beforeunload', function() {
-            autoSaveData();
-        });
-        
-        // 키보드 단축키
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey) {
-                switch(e.key) {
-                    case 's':
-                        e.preventDefault();
-                        saveData();
-                        break;
+        // 샘플 데이터 (구글 시트 연결 실패 시 사용)
+        function loadSampleData() {
+            processData = {
+                order: {
+                    name: '📋 수주관리 프로세스',
+                    total: 17,
+                    completed: 6,
+                    steps: [
+                        { name: '고객 문의서 작성 완료', department: '영업팀', status: 'completed' },
+                        { name: '기술검토 의뢰서 작성', department: '영업팀', status: 'completed' },
+                        { name: '기술 타당성 검토서 작성', department: '연구개발팀', status: 'completed' },
+                        { name: '생산 가능성 검토서 작성', department: '생산팀', status: 'completed' },
+                        { name: '원가계산서 작성', department: '경영지원팀', status: 'completed' },
+                        { name: '견적서 작성 완료', department: '영업팀', status: 'completed' },
+                        { name: '견적 승인서 취득', department: '영업팀장', status: 'delayed' },
+                        { name: '견적서 제출 확인서 작성', department: '영업팀', status: 'pending' },
+                        { name: 'Follow-up 기록지 작성', department: '영업팀', status: 'pending' },
+                        { name: '주문서 접수 및 확인', department: '영업팀', status: 'pending' },
+                        { name: '주문서 검토서 작성', department: '영업팀', status: 'pending' },
+                        { name: '수주 최종 승인 완료', department: '영업팀장', status: 'pending' },
+                        { name: '수주관리 시스템 등록', department: '영업팀', status: 'pending' },
+                        { name: '생산계획서 수립', department: '생산관리팀', status: 'pending' },
+                        { name: '자재 발주서 발행', department: '구매팀', status: 'pending' },
+                        { name: '주문확인서 고객 발송', department: '영업팀', status: 'pending' },
+                        { name: '수주현황 관리표 업데이트', department: '영업팀', status: 'pending' }
+                    ]
+                },
+                development: {
+                    name: '🔬 제품개발 프로세스',
+                    total: 12,
+                    completed: 4,
+                    steps: [
+                        { name: '고객 사양서 및 기술 요구사항 문서 접수 완료', department: '영업팀', status: 'completed' },
+                        { name: '물성 요구사항 (인장강도, 신장률, 경도 등) 명확히 확인', department: '품질팀', status: 'completed' },
+                        { name: '용도 및 가공조건 (압출온도, 성형조건 등) 파악', department: '기술팀', status: 'completed' },
+                        { name: '납기 일정 및 물량 확인', department: '영업팀', status: 'completed' },
+                        { name: '환경 규제 요구사항 (RoHS, REACH 등) 확인', department: '품질팀', status: 'progress' },
+                        { name: '기술적 실현 가능성 검토 완료', department: '연구개발팀', status: 'pending' },
+                        { name: '기본 수지(PVC) 등급 선정 완료', department: '연구개발팀', status: 'pending' },
+                        { name: 'Lab 스케일 물성 테스트 완료', department: '품질팀', status: 'pending' },
+                        { name: '배합표 최종 승인 완료', department: '품질팀장', status: 'pending' },
+                        { name: '고객 샘플 포장 및 라벨링 완료', department: '생산팀', status: 'pending' },
+                        { name: '고객 최종 승인서 수령', department: '영업팀', status: 'pending' },
+                        { name: '양산 배합표 시스템 등록', department: '품질팀', status: 'pending' }
+                    ]
+                },
+                claim: {
+                    name: '🚨 고객클레임처리 프로세스',
+                    total: 9,
+                    completed: 3,
+                    steps: [
+                        { name: '클레임 접수 등록, 과거 문제 이력 점검', department: '품질팀', status: 'completed' },
+                        { name: '즉시 대응, 고객 특별요구사항 품질팀 전달', department: '영업팀', status: 'completed' },
+                        { name: '원인 분석', department: '품질팀', status: 'completed' },
+                        { name: '클레임 조사보고서 작성', department: '품질팀', status: 'delayed' },
+                        { name: '개선대책 수립, 최고경영자 보고', department: '품질팀', status: 'pending' },
+                        { name: '고객 보고, 추가 요구사항 여부', department: '영업팀', status: 'pending' },
+                        { name: '개선조치 실행', department: '생산팀', status: 'pending' },
+                        { name: '효과성 검증', department: '품질팀', status: 'pending' },
+                        { name: '수평 전개', department: '품질팀', status: 'pending' }
+                    ]
+                },
+                audit: {
+                    name: '🔍 내부심사 프로세스',
+                    total: 8,
+                    completed: 2,
+                    steps: [
+                        { name: '년간 내부심사계획서 작성 완료', department: '품질팀', status: 'completed' },
+                        { name: '경영자 승인 완료', department: '경영진', status: 'completed' },
+                        { name: '심사팀 구성서 작성 완료', department: '품질팀', status: 'progress' },
+                        { name: '내부심사원 자격 확인 (교육이수 여부)', department: '품질팀', status: 'pending' },
+                        { name: '심사계획서 심사 2주전 작성', department: '품질팀', status: 'pending' },
+                        { name: '피심사부서에 심사계획 통보 완료', department: '품질팀', status: 'pending' },
+                        { name: '심사 체크리스트 작성 완료', department: '품질팀', status: 'pending' },
+                        { name: '관련 문서 및 자료 사전 검토 완료', department: '품질팀', status: 'pending' }
+                    ]
+                },
+                recycle: {
+                    name: '♻️ 리사이클 프로세스',
+                    total: 10,
+                    completed: 5,
+                    steps: [
+                        { name: '불량재고 발생보고서 작성 완료', department: '생산팀', status: 'completed' },
+                        { name: '불량재고 격리 및 라벨링 완료', department: '생산팀', status: 'completed' },
+                        { name: '불량재고 분류표 작성 완료', department: '품질팀', status: 'completed' },
+                        { name: '리사이클 가능성 판정서 완료', department: '품질팀', status: 'completed' },
+                        { name: '전처리 작업지시서 확인', department: '생산팀', status: 'completed' },
+                        { name: '선별 및 세척 작업 완료', department: '생산팀', status: 'progress' },
+                        { name: '파쇄 작업 완료 (5-10mm, 금속검출 통과)', department: '생산팀', status: 'pending' },
+                        { name: '전처리 완료보고서 작성', department: '생산팀', status: 'pending' },
+                        { name: '혼합비율 계산서 작성', department: '품질팀', status: 'pending' },
+                        { name: '리사이클 배합표 승인', department: '품질팀장', status: 'pending' }
+                    ]
                 }
-            }
-        });
+            };
+            
+            updateDashboard();
+            showNotification('샘플 데이터를 로드했습니다. 구글 시트 연결을 확인해주세요.', 'error');
+        }
     </script>
 </body>
 </html>
